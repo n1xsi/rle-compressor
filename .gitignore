@@ -53,3 +53,17 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Compiled binaries
+rle
+
+# Compressed archives (results of testing)
+*.rle
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
