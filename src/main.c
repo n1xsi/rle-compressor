@@ -10,7 +10,7 @@
 #ifdef _WIN32  // Windows
     #include <direct.h>
     #define MAKE_DIR(path) _mkdir(path)
-#else  // Linux/MacOS
+#else         // Linux/MacOS
     #include <sys/stat.h>
     #include <sys/types.h>
     #define MAKE_DIR(path) mkdir(path, 0755)
@@ -31,9 +31,11 @@ typedef struct
 void remove_extension(char *filename)
 {
     char *dot = strrchr(filename, '.'); // Поиск последней точки в имени файла
+
+    // Проверка наличия расширения
     if (dot && dot != filename)
-    {                // Проверка наличия расширения
-        *dot = '\0'; // Замена точки на конец строки для удаления расширения
+    {
+        *dot = '\0'; // Замена точки на конец строки (для удаления расширения)
     }
 }
 
@@ -41,7 +43,7 @@ void remove_extension(char *filename)
 const char *get_extension(const char *filename)
 {
     const char *dot = strrchr(filename, '.'); // Поиск последней точки в имени файла
-    return dot ? dot + 1 : "";                // Возвращает расширение или пустую строку
+    return dot ? dot + 1 : "";                // Возврат расширения или пустой строки
 }
 
 // Функция для сжатия данных методом RLE
@@ -49,19 +51,23 @@ size_t rle_compress(const unsigned char *input, size_t length, unsigned char **o
 {
     size_t buffer_size = INITIAL_BUFFER_SIZE; // Начальный размер буфера
     *output = malloc(buffer_size);            // Выделение памяти для сжатых данных
+
+    // Проверка на успешное выделение памяти
     if (*output == NULL)
-    {                                       // Проверка на успешное выделение памяти
+    {
         perror("Memory allocation failed"); // Сообщение об ошибке
-        exit(1);                            // Завершение программы
+        exit(1);                            // Завершение программы с кодом ошибки 1
     }
 
     size_t out_pos = 0; // Текущая позиция в буфере
-    for (size_t i = 0; i < length;)
-    {                                  // Итерация по входным данным
-        unsigned char byte = input[i]; // Текущий байт данных
-        size_t count = 1;              // Счетчик повторяющихся байтов
 
-        // Подсчет последовательных одинаковых байтов (не более 255)
+    // Итерация по входным данным
+    for (size_t i = 0; i < length;)
+    {
+        unsigned char byte = input[i]; // Текущий байт данных
+        size_t count = 1;              // Счётчик повторяющихся байтов
+
+        // Подсчёт последовательных одинаковых байтов (не более 255)
         while (i + count < length && input[i + count] == byte && count < 255)
         {
             count++;
@@ -84,7 +90,7 @@ size_t rle_compress(const unsigned char *input, size_t length, unsigned char **o
         (*output)[out_pos++] = byte;
         i += count; // Переход к следующему уникальному байту
     }
-    return out_pos; // Возвращаем размер сжатых данных
+    return out_pos; // Возврат размера сжатых данных
 }
 
 // Функция для декодирования данных RLE
@@ -92,15 +98,19 @@ size_t rle_decompress(const unsigned char *input, size_t length, unsigned char *
 {
     size_t buffer_size = INITIAL_BUFFER_SIZE; // Начальный размер буфера
     *output = malloc(buffer_size);            // Выделение памяти для декодированных данных
+
+    // Проверка на успешное выделение памяти
     if (*output == NULL)
-    { // Проверка на успешное выделение памяти
+    {
         perror("Memory allocation failed");
         exit(1);
     }
 
     size_t out_pos = 0; // Текущая позиция в буфере
+
+    // Итерация по входным данным
     for (size_t i = 0; i < length; i += 2)
-    {                                      // Итерация по входным данным
+    {
         unsigned char count = input[i];    // Количество повторений байта
         unsigned char byte = input[i + 1]; // Повторяющийся байт
 
@@ -122,15 +132,15 @@ size_t rle_decompress(const unsigned char *input, size_t length, unsigned char *
         memset(*output + out_pos, byte, count); // Заполнение буфера байтом
         out_pos += count;                       // Увеличение позиции на количество записанных байтов
     }
-    return out_pos; // Возвращаем размер декодированных данных
+    return out_pos; // Возврат размера декодированных данных
 }
 
 // Функция для чтения файла и сохранения его данных в структуре FileEntry
 FileEntry *read_file(const char *path)
 {
-    FILE *file = fopen(path, "rb"); // Открытие файла для чтения
+    FILE *file = fopen(path, "rb"); // Открытие файла для байтового чтения
     if (!file)
-        return NULL; // Если файл не открылся, возвращаем NULL
+        return NULL; // Если файл не открылся - возврат NULL
 
     fseek(file, 0, SEEK_END);  // Переход к концу файла
     size_t size = ftell(file); // Определение размера файла
@@ -144,7 +154,7 @@ FileEntry *read_file(const char *path)
     strncpy(entry->path, path, sizeof(entry->path)); // Сохранение пути файла
     entry->size = size;                              // Сохранение размера файла
     entry->content = content;                        // Сохранение содержимого файла
-    return entry;                                    // Возвращение указателя на структуру
+    return entry;                                    // Возвращение указателя (указатель на структуру)
 }
 
 // Функция для записи данных в файл
@@ -161,20 +171,23 @@ void compress_directory(const char *path, FILE *output)
     struct dirent *entry;     // Указатель на запись директории
     DIR *dir = opendir(path); // Открытие директории
     if (!dir)
-        return; // Если не удалось открыть директорию, выходим
+        return; // Если не удалось открыть директорию - выход
 
+    // Чтение всех записей в директории
     while ((entry = readdir(dir)) != NULL)
-    { // Чтение всех записей в директории
+    {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-            continue; // Пропускаем текущую и родительскую директории
+            continue; // Пропуск текущей и родительской директории
 
         char full_path[512]; // Полный путь к файлу или директории
         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
         struct stat st;
         stat(full_path, &st); // Получение информации о файле или директории
+
+        // Если это директория - применение рекурсивного сжатия
         if (S_ISDIR(st.st_mode))
-        { // Если это директория, рекурсивно сжимаем ее
+        {
             compress_directory(full_path, output);
         }
         else
@@ -190,9 +203,9 @@ void compress_directory(const char *path, FILE *output)
             fwrite(&compressed_size, sizeof(compressed_size), 1, output);  // Запись размера сжатых данных
             fwrite(compressed, compressed_size, 1, output);                // Запись сжатых данных
 
-            free(compressed);          // Освобождение памяти
-            free(file_entry->content); // Освобождение памяти
-            free(file_entry);          // Освобождение памяти
+            free(compressed);          // Освобождение памяти для сжатых данных
+            free(file_entry->content); // Освобождение памяти для содержимого файла
+            free(file_entry);          // Освобождение памяти для структуры FileEntry
         }
     }
     closedir(dir); // Закрытие директории
@@ -201,8 +214,9 @@ void compress_directory(const char *path, FILE *output)
 // Функция для декомпрессии директории из сжатого файла
 void decompress_directory(const char *output_path, FILE *input)
 {
+    // Чтение до конца файла
     while (!feof(input))
-    { // Чтение до конца файла
+    {
         FileEntry file_entry;
 
         if (fread(file_entry.path, sizeof(file_entry.path), 1, input) != 1)
@@ -254,7 +268,7 @@ int is_compressed_directory(FILE *input)
         return 0;
     fseek(input, 0, SEEK_SET); // Возврат в начало файла
 
-    // Если путь содержит '/', то файл представляет собой сжатую директорию
+    // Если путь содержит '/' - файл представляет собой сжатую директорию
     return strchr(first_path, '/') != NULL;
 }
 
@@ -288,8 +302,9 @@ void compress_multiple_files(int file_count, char *file_paths[], FILE *output)
 // Функция для декомпрессии без создания директорий
 void decompress_in_current_directory(FILE *input)
 {
+    // Чтение до конца сжатого файла
     while (!feof(input))
-    { // Чтение до конца сжатого файла
+    {
         FileEntry file_entry;
 
         // Чтение пути и размера сжатых данных
@@ -319,11 +334,12 @@ void decompress_in_current_directory(FILE *input)
     }
 }
 
-// Основная функция программы
+// Главная функция программы
 int main(int argc, char *argv[])
 {
+    // Проверка правильности количества аргументов
     if (argc < 3)
-    { // Проверка правильности количества аргументов
+    {
         fprintf(stderr, "Usage: %s <compress|decompress> <paths...>\n", argv[0]);
         return 1;
     }
@@ -422,7 +438,7 @@ int main(int argc, char *argv[])
             char output_dir[512];
             remove_extension(argv[2]);
             snprintf(output_dir, sizeof(output_dir), "%s", argv[2]);
-            MAKE_DIR(output_dir);                 // Создание выходной директории
+            MAKE_DIR(output_dir);                    // Создание выходной директории
             decompress_directory(output_dir, input); // Декомпрессия в директорию
             printf("Decompression complete: %s\n", output_dir);
         }
