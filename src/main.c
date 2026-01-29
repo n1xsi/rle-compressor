@@ -6,6 +6,16 @@
 #include <unistd.h>   // Библиотека для системных вызовов (например, fseek)
 #include <fcntl.h>    // Библиотека для управления файлами (например, open)
 
+// Определение операционной системы
+#ifdef _WIN32  // Windows
+    #include <direct.h>
+    #define MAKE_DIR(path) _mkdir(path)
+#else  // Linux/MacOS
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #define MAKE_DIR(path) mkdir(path, 0755)
+#endif
+
 // Определение начального размера буфера
 #define INITIAL_BUFFER_SIZE 1024
 
@@ -223,7 +233,7 @@ void decompress_directory(const char *output_path, FILE *input)
         if (dir_end)
         {
             *dir_end = '\0';
-            mkdir(full_path, 0755); // Создание директории
+            MAKE_DIR(full_path); // Создание директории
             *dir_end = '/';
         }
 
@@ -412,7 +422,7 @@ int main(int argc, char *argv[])
             char output_dir[512];
             remove_extension(argv[2]);
             snprintf(output_dir, sizeof(output_dir), "%s", argv[2]);
-            mkdir(output_dir, 0755);                 // Создание выходной директории
+            MAKE_DIR(output_dir);                 // Создание выходной директории
             decompress_directory(output_dir, input); // Декомпрессия в директорию
             printf("Decompression complete: %s\n", output_dir);
         }
