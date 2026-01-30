@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -O2
+CFLAGS = -std=c11 -O2
 TARGET = rle
 SRC = src/main.c
 
