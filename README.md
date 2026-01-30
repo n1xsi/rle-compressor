@@ -1,8 +1,13 @@
-# RLE Compressor на Си
+<div align="center">
+   <img src="https://vault.pictures/media/images/ac/fc/71/acfc71a729fe4774870717e4b1f241ea.jpg" width="30%">
 
-![Language](https://img.shields.io/badge/language-C-blue.svg)
-![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-green.svg)
-![License](https://img.shields.io/badge/license-MIT-orange.svg)
+   <h1>RLE Compressor на Си</h1>
+
+   ![Language](https://img.shields.io/badge/c-404040?style=for-the-badge&logo=c&logoColor=00599c)
+   ![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-404040?style=for-the-badge&labelColor=219431)
+   ![License](https://custom-icon-badges.demolab.com/badge/MIT-005cbf?logo=law&label=License&labelColor=404040&style=for-the-badge)
+
+</div>
 
 Консольная утилита для сжатия и декомпрессии файлов и директорий с использованием алгоритма RLE (Run-Length Encoding), также известного как метод «стопка книг». Проект разработан в рамках <b><i>курсовой работы</i></b> по дисциплине «Основы программирования» (ГУАП, 2024) 🎓.
 
