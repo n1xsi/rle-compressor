@@ -1,5 +1,5 @@
 <div align="center">
-   <img src="https://vault.pictures/media/images/ac/fc/71/acfc71a729fe4774870717e4b1f241ea.jpg" width="30%">
+   <img src="https://i.imgur.com/WRRLOJC.png" width="30%">
 
    <h1>RLE Compressor на Си</h1>
 
